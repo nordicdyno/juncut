@@ -1,0 +1,42 @@
+package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"flag"
+	"fmt"
+	"log"
+	"os"
+)
+
+var (
+	pretty = flag.Bool("pretty", false, "enable pretty output")
+)
+
+func main() {
+	flag.Parse()
+
+	result, err := parseAndFix(os.Stdin)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if !*pretty {
+		fmt.Println(result)
+		return
+	}
+
+	prettyResult, err := formatJSON([]byte(result))
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(prettyResult))
+}
+
+func formatJSON(data []byte) ([]byte, error) {
+	var prettyJSON bytes.Buffer
+	err := json.Indent(&prettyJSON, data, "", "  ") // indent with 2 spaces
+	if err != nil {
+		return nil, err
+	}
+	return prettyJSON.Bytes(), nil
+}
