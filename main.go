@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 )
@@ -16,7 +17,12 @@ var (
 func main() {
 	flag.Parse()
 
-	result, err := parseAndFix(os.Stdin)
+	var input bytes.Buffer
+	_, err := io.Copy(&input, os.Stdin)
+	if err != nil {
+		log.Fatal(err)
+	}
+	result, err := parseAndFix(input.Bytes())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,7 +31,7 @@ func main() {
 		return
 	}
 
-	prettyResult, err := formatJSON([]byte(result))
+	prettyResult, err := formatJSON(result)
 	if err != nil {
 		log.Fatal(err)
 	}

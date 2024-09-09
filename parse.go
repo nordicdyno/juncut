@@ -10,7 +10,16 @@ import (
 	"strings"
 )
 
-func parseAndFix(r io.Reader) (string, error) {
+func parseAndFix(b []byte) ([]byte, error) {
+	var trimmed = bytes.TrimRight(b, " \n")
+	result, err := parseAndFixTrimmed(bytes.NewReader(trimmed))
+	if err != nil {
+		return nil, err
+	}
+	return []byte(result), nil
+}
+
+func parseAndFixTrimmed(r io.Reader) (string, error) {
 	var buf bytes.Buffer
 	decoder := json.NewDecoder(io.TeeReader(r, &buf))
 
