@@ -27,7 +27,7 @@ func main() {
 		log.Fatal(err)
 	}
 	if !*pretty {
-		fmt.Println(result)
+		fmt.Println(string(result))
 		return
 	}
 
